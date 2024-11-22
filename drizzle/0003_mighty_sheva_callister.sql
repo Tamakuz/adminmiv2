@@ -1,0 +1,1 @@
+ALTER TABLE "mahasiswa" ADD COLUMN "judul_ta" text;
