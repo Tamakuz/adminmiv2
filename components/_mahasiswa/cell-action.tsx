@@ -8,15 +8,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Edit, MoreHorizontal, Trash } from "lucide-react";
+import { Edit, Eye, MoreHorizontal, Trash } from "lucide-react";
 import Link from "next/link";
-import useMahasiswaUpdateStore from "@/app/(client)/context/useMahasiswaUpdateStore";
+import useMahasiswaStore from "@/app/(client)/context/useMahasiswaStore";
 import { Mahasiswa } from "@/constants/data";
 interface CellActionProps {
   data: Mahasiswa;
 }
 const CellAction = ({ data }: CellActionProps) => {
-  const setMahasiswa = useMahasiswaUpdateStore((state) => state.setMahasiswa);
+  const setMahasiswa = useMahasiswaStore((state) => state.setMahasiswa);
 
   return (
     <DropdownMenu modal={false}>
@@ -28,6 +28,17 @@ const CellAction = ({ data }: CellActionProps) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+        <DropdownMenuItem>
+          <Link
+            className="flex items-center"
+            prefetch={true}
+            href={`/mahasiswa/detail/${data.id}`}
+            onClick={() => setMahasiswa(data)}
+          >
+            <Eye className="mr-2 h-4 w-4" /> Detail
+          </Link>
+        </DropdownMenuItem>
 
         <DropdownMenuItem>
           <Link

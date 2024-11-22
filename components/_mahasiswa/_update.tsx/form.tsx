@@ -1,6 +1,9 @@
 "use client";
 
-import { getMahasiswaById, updateMahasiswa } from "@/app/(client)/services/mahasiswa";
+import {
+  getMahasiswaById,
+  updateMahasiswa,
+} from "@/app/(client)/services/mahasiswa";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Mahasiswa, Response } from "@/constants/data";
 import { Input } from "@/components/ui/input";
@@ -25,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useEffect } from "react";
-import useMahasiswaUpdateStore from "@/app/(client)/context/useMahasiswaUpdateStore";
+import useMahasiswaStore from "@/app/(client)/context/useMahasiswaStore";
 
 interface FormProps {
   id: string;
@@ -42,19 +45,25 @@ const schema = z.object({
   email: z.string().email({ message: "Email tidak valid" }),
   kelamin: z.enum(["L", "P"], { required_error: "Jenis kelamin harus diisi" }),
   angkatan: z.string().min(1, { message: "Angkatan harus diisi" }),
-  status: z.enum(["Aktif", "Cuti", "Lulus", "DO"], { required_error: "Status harus diisi" }),
+  status: z.enum(["Aktif", "Cuti", "Lulus", "DO"], {
+    required_error: "Status harus diisi",
+  }),
   pembimbing_id: z.string().nullable(),
   nomor_hp: z.string().nullable(),
   alamat: z.string().nullable(),
   tanggal_lahir: z.string().nullable(),
   tempat_lahir: z.string().nullable(),
-  agama: z.enum(["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"], { required_error: "Agama harus diisi" }).nullable(),
+  agama: z
+    .enum(["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"], {
+      required_error: "Agama harus diisi",
+    })
+    .nullable(),
   ipk: z.string().nullable(),
-  judul_ta: z.string().nullable()
+  judul_ta: z.string().nullable(),
 });
 
 const Form = ({ id }: FormProps) => {
-  const { mahasiswa, setMahasiswa } = useMahasiswaUpdateStore((state) => state);
+  const { mahasiswa, setMahasiswa } = useMahasiswaStore((state) => state);
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -64,8 +73,8 @@ const Form = ({ id }: FormProps) => {
       tempat_lahir: "",
       agama: null,
       ipk: "",
-      judul_ta: ""
-    }
+      judul_ta: "",
+    },
   });
 
   const { data, isLoading } = useQuery<MahasiswaResponse, Error>({
@@ -77,7 +86,7 @@ const Form = ({ id }: FormProps) => {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchInterval: false,
-    enabled: !mahasiswa
+    enabled: !mahasiswa,
   });
 
   useEffect(() => {
@@ -86,14 +95,14 @@ const Form = ({ id }: FormProps) => {
         ...mahasiswa,
         kelamin: mahasiswa.kelamin || undefined,
         status: mahasiswa.status || undefined,
-        agama: mahasiswa.agama || undefined
+        agama: mahasiswa.agama || undefined,
       });
     } else if (data?.data) {
       form.reset({
         ...data.data,
         kelamin: data.data.kelamin || undefined,
         status: data.data.status || undefined,
-        agama: data.data.agama || undefined
+        agama: data.data.agama || undefined,
       });
     }
   }, [data, form, mahasiswa]);
@@ -112,12 +121,11 @@ const Form = ({ id }: FormProps) => {
     onError: (error: any) => {
       console.log(error);
       toast.error("Data mahasiswa gagal diupdate");
-    }
+    },
   });
 
   const onSubmit = (values: z.infer<typeof schema>) => {
-    // updateMhs(values);
-    console.log(values);
+    updateMhs(values);
   };
 
   if (isLoading) {
@@ -125,7 +133,9 @@ const Form = ({ id }: FormProps) => {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
-          <p className="text-muted-foreground text-sm">Memuat data mahasiswa...</p>
+          <p className="text-muted-foreground text-sm">
+            Memuat data mahasiswa...
+          </p>
         </div>
       </div>
     );
@@ -200,7 +210,9 @@ const Form = ({ id }: FormProps) => {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={field.value || "Pilih jenis kelamin"} />
+                        <SelectValue
+                          placeholder={field.value || "Pilih jenis kelamin"}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -248,7 +260,9 @@ const Form = ({ id }: FormProps) => {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={field.value || "Pilih status"} />
+                        <SelectValue
+                          placeholder={field.value || "Pilih status"}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -349,11 +363,11 @@ const Form = ({ id }: FormProps) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tanggal Lahir</FormLabel>
-                  <Input 
-                    type="date" 
+                  <Input
+                    type="date"
                     {...field}
                     value={field.value ?? ""}
-                    disabled={isPending} 
+                    disabled={isPending}
                   />
                   <FormMessage className="text-xs font-medium text-destructive mt-1" />
                 </FormItem>
@@ -390,7 +404,9 @@ const Form = ({ id }: FormProps) => {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={field.value || "Pilih agama"} />
+                        <SelectValue
+                          placeholder={field.value || "Pilih agama"}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
