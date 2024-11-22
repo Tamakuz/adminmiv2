@@ -12,11 +12,26 @@ import { Edit, Eye, MoreHorizontal, Trash } from "lucide-react";
 import Link from "next/link";
 import useMahasiswaStore from "@/app/(client)/context/useMahasiswaStore";
 import { Mahasiswa } from "@/constants/data";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
+import { deleteMahasiswa } from "@/app/(client)/services/mahasiswa";
+
 interface CellActionProps {
   data: Mahasiswa;
 }
 const CellAction = ({ data }: CellActionProps) => {
   const setMahasiswa = useMahasiswaStore((state) => state.setMahasiswa);
+  const queryClient = useQueryClient();
+  const { mutate: deleteMhs, isPending } = useMutation({
+    mutationFn: () => deleteMahasiswa(data.id),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["mahasiswa"] });
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   return (
     <DropdownMenu modal={false}>
@@ -50,8 +65,9 @@ const CellAction = ({ data }: CellActionProps) => {
             <Edit className="mr-2 h-4 w-4" /> Update
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Trash className="mr-2 h-4 w-4" /> Delete
+        <DropdownMenuItem onClick={() => deleteMhs()}>
+          <Trash className="mr-2 h-4 w-4" />{" "}
+          {isPending ? "Menghapus..." : "Hapus"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
