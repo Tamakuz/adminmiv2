@@ -25,3 +25,10 @@ export const updateMahasiswa = async (data: Mahasiswa) => {
   })
   return await response.json()
 }
+
+export const deleteMahasiswa = async (id: string) => {
+  const response = await fetch(`/api/mahasiswa/${id}`, {
+    method: 'DELETE'
+  })
+  return await response.json()
+}

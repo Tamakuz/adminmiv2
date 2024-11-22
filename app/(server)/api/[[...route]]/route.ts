@@ -10,6 +10,7 @@ import { postMahasiswa } from '../../services/mahasiswas/postMahasiswa'
 import { getMahasiswa } from '../../services/mahasiswas/getMahasiswa'
 import { getMahasiswaById } from '../../services/mahasiswas/getMahasiswaById'
 import { putMahasiswa } from '../../services/mahasiswas/putMahasiswa'
+import { deleteMahasiswa } from '../../services/mahasiswas/deleteMahasiswa'
 
 export const runtime = 'nodejs'
 
@@ -31,6 +32,8 @@ app.post('/mahasiswa', postMahasiswa)
 app.get('/mahasiswa', getMahasiswa)
 app.get('/mahasiswa/:id', getMahasiswaById)
 app.put('/mahasiswa/:id', putMahasiswa)
+app.delete('/mahasiswa/:id', deleteMahasiswa)
+
 export const GET = handle(app)
 export const POST = handle(app)
 export const PUT = handle(app)
